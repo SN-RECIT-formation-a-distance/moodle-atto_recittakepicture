@@ -1,0 +1,10 @@
+{
+    "name": "moodle-atto_recittakepicture-button",
+    "builds": {
+        "moodle-atto_recittakepicture-button": {
+            "jsfiles": [
+                "button.js"
+            ]
+        }
+    }
+}
