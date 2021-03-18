@@ -45,7 +45,7 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
                 '<video id="{{component}}video"></video>' +
             '</div>' +
             '<div><button id="{{component}}startbutton" class="btn btn-secondary">{{get_string "takephoto" component}}</button></div>' +
-            '<canvas id="{{component}}canvas"></canvas>' +
+            '<canvas id="{{component}}canvas" style="display:none"></canvas>' +
             '<div class="output">' +
                 '<img id="{{component}}photo" alt="capture">' +
             '</div>' +
@@ -125,7 +125,7 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
             photo.setAttribute('src', photodata);
 
             // access video stream from webcam
-            /*navigator.mediaDevices.getUserMedia({         video: true,            audio: false                })
+            navigator.mediaDevices.getUserMedia({         video: true,            audio: false                })
                 // on success, stream it in video tag
                 .then(function(stream) {
                     video.srcObject = stream;
@@ -133,7 +133,7 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
                 })
                 .catch(function(err) {
                     console.log("An error occurred: " + err);
-                });*/
+                });
 
             video.addEventListener('canplay', function(ev) {
                 if (!streaming) {
@@ -169,9 +169,9 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
                 ev.preventDefault();
                 var block = photodata.split(";");
                 // Get the content type of the image
-                var contentType = block[0].split(":")[1];// In this case "image/gif"
+                var contentType = block[0].split(":")[1];
                 // get the real base64 content of the file
-                var realData = block[1].split(",")[1];// In this case "R0lGODlhPQBEAPeoAJosM...."
+                var realData = block[1].split(",")[1];
                 
                 // Convert it to a blob to upload
                 var blob = that.b64toBlob(realData, contentType);
@@ -278,6 +278,9 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
         };
         xhr.open("POST", M.cfg.wwwroot + '/repository/repository_ajax.php?action=upload', true);
         xhr.send(formData);
+        self.getDialogue({
+            focusAfterHide: null
+        }).hide();
     },
     
     b64toBlob: function(b64Data, contentType, sliceSize) {
