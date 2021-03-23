@@ -44,12 +44,13 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
             '<div class="camera">' +
                 '<video id="{{component}}video"></video>' +
             '</div>' +
-            '<div><button id="{{component}}startbutton" class="btn btn-secondary">{{get_string "takephoto" component}}</button></div>' +
             '<canvas id="{{component}}canvas" style="display:none"></canvas>' +
-            '<div class="output">' +
-                '<img id="{{component}}photo" alt="capture">' +
+            '<div class="camoutput">' +
+                '<img id="{{component}}photo" width="{{width}}" height="{{height}}" alt="capture">' +
             '</div>' +
-            '<button class="btn btn-secondary" id="{{component}}submit" disabled> {{get_string "saveimage" component}}</button>' +
+            '<div class="video-controls"><div class="video-options">{{get_string "selectcamera" component}}: <select></select></div>' +
+            '<button id="{{component}}startbutton" class="btn btn-secondary">{{get_string "takephoto" component}}</button>' +
+            '<button class="btn btn-secondary" id="{{component}}submit" disabled> {{get_string "saveimage" component}}</button></div>' +
         '</form>';
         COMPONENTNAME = 'atto_recittakepicture';
          
@@ -100,18 +101,19 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
             var template = Y.Handlebars.compile(TEMPLATE);
             var content = Y.Node.create(template({
                     elementid: this.get('host').get('elementid'),
-                    component: COMPONENTNAME
+                    component: COMPONENTNAME,
+                    width: window.innerWidth * 0.8,
+                    height: window.innerHeight,
                 }));
             dialogue.set('bodyContent', content)
                     .show();
 
-                            
             var video = document.getElementById(COMPONENTNAME+'video');
             var canvas = document.getElementById(COMPONENTNAME+'canvas');
             var photo = document.getElementById(COMPONENTNAME+'photo');
             var startbutton = document.getElementById(COMPONENTNAME+'startbutton');
             var submitbutton = document.getElementById(COMPONENTNAME+'submit');
-            var width = 200;
+            var width = window.innerWidth * 0.8;
             var height = 200;
             var streaming = false;
             var photodata = '';
@@ -124,16 +126,8 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
             photodata = canvas.toDataURL('image/png');
             photo.setAttribute('src', photodata);
 
-            // access video stream from webcam
-            navigator.mediaDevices.getUserMedia({         video: true,            audio: false                })
-                // on success, stream it in video tag
-                .then(function(stream) {
-                    video.srcObject = stream;
-                    video.play();
-                })
-                .catch(function(err) {
-                    console.log("An error occurred: " + err);
-                });
+            this.startStream({});
+            photo.parentElement.style.display = "none";
 
             video.addEventListener('canplay', function(ev) {
                 if (!streaming) {
@@ -152,6 +146,14 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
             }, false);
 
             startbutton.addEventListener('click', function(ev) {
+                if (video.style.display === "none") {
+                    video.style.display = "block";
+                    photo.parentElement.style.display = "none";
+                    return;
+                }else{
+                    video.style.display = "none";
+                    photo.parentElement.style.display = "block";
+                }
                 if (width && height) {
                     canvas.width = width;
                     canvas.height = height;
@@ -177,9 +179,51 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
                 var blob = that.b64toBlob(realData, contentType);
                 that._uploadImage(blob);
             }, false);
+            this.loadCameraDevices();
+    },
 
-        },
-        
+    loadCameraDevices: function(){
+        let that = this;
+        if ('mediaDevices' in navigator && navigator.mediaDevices.getUserMedia) {
+            const cameraOptions = document.querySelector('.video-options>select');
+            navigator.mediaDevices.enumerateDevices().then(function(devices){
+                const videoDevices = devices.filter(device => device.kind === 'videoinput');
+                if (videoDevices.length == 0){
+                    document.querySelector('.video-options').style.display = 'none';
+                }
+                const options = videoDevices.map(videoDevice => {
+                return `<option value="${videoDevice.deviceId}">${videoDevice.label}</option>`;
+                });
+                cameraOptions.innerHTML = options.join('');
+
+                cameraOptions.onchange = function(){
+                    that.startStream({
+                        deviceId: {
+                        exact: cameraOptions.value
+                        }
+                    });
+                }
+            });
+        }else{
+            document.querySelector('.video-options').style.display = 'none';
+        }
+    },
+
+    startStream: function(constraints){
+        // access video stream from webcam
+        var video = document.getElementById(COMPONENTNAME+'video');
+        if (!constraints) constraints = {};
+        navigator.mediaDevices.getUserMedia({...constraints, video: true, audio: false})
+            // on success, stream it in video tag
+            .then(function(stream) {
+                video.srcObject = stream;
+                video.play();
+            })
+            .catch(function(err) {
+                console.log("An error occurred: " + err);
+            });
+    },
+
     _uploadImage: function(fileToSave) {
 
         var self = this,

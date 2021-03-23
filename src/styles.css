@@ -1,0 +1,16 @@
+.camoutput {
+    border: #ff0000 3px solid;
+}
+
+.video-controls {
+    margin: auto;
+    text-align: center;
+}
+
+.video-controls > * {
+    margin-left: 10px;
+}
+
+.video-options {
+    display: inline;
+}

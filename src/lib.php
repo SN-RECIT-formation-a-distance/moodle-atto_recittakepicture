@@ -23,6 +23,7 @@ function atto_recittakepicture_strings_for_js() {
     $PAGE->requires->strings_for_js(array('pluginname',
                                           'saveimage',
                                           'takephoto',
+                                          'selectcamera',
                                         ),
                                     'atto_recittakepicture');
 }
