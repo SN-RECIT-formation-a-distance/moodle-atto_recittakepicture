@@ -27,7 +27,7 @@
      */
     
 
-     IMAGETEMPLATE = '' +
+     IMAGETEMPLATE = '<a href="{{url}}" target="_blank">' +
      '<img src="{{url}}" alt="{{alt}}" ' +
          '{{#if width}}width="{{width}}" {{/if}}' +
          '{{#if height}}height="{{height}}" {{/if}}' +
@@ -35,7 +35,7 @@
          '{{#if customstyle}}style="{{customstyle}}" {{/if}}' +
          '{{#if classlist}}class="{{classlist}}" {{/if}}' +
          '{{#if id}}id="{{id}}" {{/if}}' +
-         '/>';
+         '/></a>';
 
     TEMPLATE = '' +
         '<form id="atto_recittakepicture_dialogue" class="recittakepicture">' +
@@ -94,6 +94,7 @@
             // Set a maximum width for the dialog. This will prevent the dialog width to extend beyond the screen width
             // in cases when the uploaded image has larger width.
             dialogue.get('boundingBox').setStyle('maxWidth', '90%');
+            dialogue.get('boundingBox').setStyle('maxHeight', '90%');
             // Set the dialogue content, and then show the dialogue.
     
             var template = Y.Handlebars.compile(TEMPLATE);
@@ -112,7 +113,7 @@
             var startbutton = document.getElementById(COMPONENTNAME+'startbutton');
             var submitbutton = document.getElementById(COMPONENTNAME+'submit');
             var width = window.innerWidth * 0.8;
-            var height = 200;
+            var height = window.innerHeight * 0.8;
             var streaming = false;
             var photodata = '';
 
@@ -134,34 +135,40 @@
                     if (isNaN(height)) {
                         height = width / (4 / 3);
                     }
+                    if (height > window.innerHeight*0.8){
+                        height = window.innerHeight * 0.8
+                    }
 
                     video.setAttribute('width', width);
-                    video.setAttribute('height', height);
+                    //video.setAttribute('height', height);
                     canvas.setAttribute('width', width);
-                    canvas.setAttribute('height', height);
+                    //canvas.setAttribute('height', height);
                     streaming = true;
                 }
             }, false);
 
             startbutton.addEventListener('click', function(ev) {
+                ev.preventDefault();
                 if (video.style.display === "none") {
                     video.style.display = "block";
                     photo.parentElement.style.display = "none";
+                    submitbutton.disabled = true;
                     return;
                 }else{
                     video.style.display = "none";
                     photo.parentElement.style.display = "block";
                 }
                 if (width && height) {
-                    canvas.width = width;
-                    canvas.height = height;
-                    context.drawImage(video, 0, 0, width, height);
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
             
                     photodata = canvas.toDataURL('image/png');
                     photo.setAttribute('src', photodata);
+                    photo.setAttribute('width', width)
+                    photo.removeAttribute('height')
                     submitbutton.disabled = false;
                 }
-                ev.preventDefault();
             }, false);
 
             let that = this;
@@ -299,6 +306,7 @@
                         newhtml = template({
                             url: file.url,
                             presentation: true,
+                            classlist: 'w-100',
                         });
                         newimage = Y.Node.create(newhtml);
                         if (placeholder) {
