@@ -114,8 +114,8 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
             var photo = document.getElementById(COMPONENTNAME+'photo');
             var startbutton = document.getElementById(COMPONENTNAME+'startbutton');
             var submitbutton = document.getElementById(COMPONENTNAME+'submit');
-            var width = window.innerWidth * 0.8;
-            var height = window.innerHeight * 0.8;
+            var width = window.innerWidth * 0.7;
+            var height = window.innerHeight * 0.7;
             var streaming = false;
             var photodata = '';
 
