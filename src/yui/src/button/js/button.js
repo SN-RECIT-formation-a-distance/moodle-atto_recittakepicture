@@ -182,14 +182,18 @@
                 var realData = block[1].split(",")[1];
                 
                 // Convert it to a blob to upload
-                //var blob = that.b64toBlob(realData, contentType);
-                const mediaStreamTrack = video.srcObject.getVideoTracks()[0];
-                const imageCapture = new ImageCapture(mediaStreamTrack);
-                imageCapture.grabFrame().then(function(img){
-                    that.bmpToBlob(img, function(blob){
-                        that._uploadImage(blob)
-                    })
-                });
+                if (typeof ImageCapture !== 'undefined'){
+                    const mediaStreamTrack = video.srcObject.getVideoTracks()[0];
+                    const imageCapture = new ImageCapture(mediaStreamTrack);
+                    imageCapture.grabFrame().then(function(img){
+                        that.bmpToBlob(img, function(blob){
+                            that._uploadImage(blob);
+                        })
+                    });
+                }else{
+                    var blob = that.b64toBlob(realData, contentType);
+                    that._uploadImage(blob);
+                }
             }, false);
             this.loadCameraDevices();
     },
