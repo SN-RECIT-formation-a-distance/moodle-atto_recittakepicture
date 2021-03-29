@@ -15,3 +15,17 @@
 .video-options {
     display: inline;
 }
+
+.camera video, .camera canvas {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+}
+
+.camoutput img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+}

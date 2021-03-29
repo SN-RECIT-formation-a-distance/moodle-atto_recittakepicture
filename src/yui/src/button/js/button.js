@@ -125,7 +125,7 @@
             photodata = canvas.toDataURL('image/png');
             photo.setAttribute('src', photodata);
 
-            this.startStream({});
+            this.startStream();
             photo.parentElement.style.display = "none";
 
             video.addEventListener('canplay', function(ev) {
@@ -135,13 +135,14 @@
                     if (isNaN(height)) {
                         height = width / (4 / 3);
                     }
-                    if (height > window.innerHeight*0.8){
-                        height = window.innerHeight * 0.8
+                    
+                    if (video.videoHeight > window.innerHeight*0.8){
+                        height = window.innerHeight * 0.8;
+                        width = video.videoWidth / (video.videoHeight / height);
                     }
 
-                    video.setAttribute('width', width);
-                    //video.setAttribute('height', height);
-                    canvas.setAttribute('width', width);
+                    //video.setAttribute('width', width);
+                    ///canvas.setAttribute('width', width);
                     //canvas.setAttribute('height', height);
                     streaming = true;
                 }
@@ -161,12 +162,12 @@
                 if (width && height) {
                     canvas.width = video.videoWidth;
                     canvas.height = video.videoHeight;
-                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
             
                     photodata = canvas.toDataURL('image/png');
                     photo.setAttribute('src', photodata);
-                    photo.setAttribute('width', width)
-                    photo.removeAttribute('height')
+                    photo.removeAttribute('width');
+                    photo.removeAttribute('height');
                     submitbutton.disabled = false;
                 }
             }, false);
@@ -181,8 +182,14 @@
                 var realData = block[1].split(",")[1];
                 
                 // Convert it to a blob to upload
-                var blob = that.b64toBlob(realData, contentType);
-                that._uploadImage(blob);
+                //var blob = that.b64toBlob(realData, contentType);
+                const mediaStreamTrack = video.srcObject.getVideoTracks()[0];
+                const imageCapture = new ImageCapture(mediaStreamTrack);
+                imageCapture.grabFrame().then(function(img){
+                    that.bmpToBlob(img, function(blob){
+                        that._uploadImage(blob)
+                    })
+                });
             }, false);
             this.loadCameraDevices();
     },
@@ -203,9 +210,11 @@
 
                 cameraOptions.onchange = function(){
                     that.startStream({
-                        deviceId: {
-                        exact: cameraOptions.value
-                        }
+                        video: {
+                            deviceId: {exact: cameraOptions.value}, 
+                            width: { min: 64, ideal: 1920 }, 
+                            height: { min: 40, ideal: 1080 },
+                        },
                     });
                 }
             });
@@ -217,8 +226,8 @@
     startStream: function(constraints){
         // access video stream from webcam
         var video = document.getElementById(COMPONENTNAME+'video');
-        if (!constraints) constraints = {};
-        navigator.mediaDevices.getUserMedia({...constraints, video: true, audio: false})
+        if (!constraints) constraints = {video: { width: { min: 64, ideal: 1920 }, height: { min: 40, ideal: 1080 }}};
+        navigator.mediaDevices.getUserMedia(constraints)
             // on success, stream it in video tag
             .then(function(stream) {
                 video.srcObject = stream;
@@ -333,6 +342,29 @@
         }).hide();
     },
     
+    bmpToBlob: function(img, f){
+        
+      const canvas = document.createElement('canvas');
+      // resize it to the size of our ImageBitmap
+      canvas.width = img.width;
+      canvas.height = img.height;
+      // try to get a bitmaprenderer context
+      let ctx = canvas.getContext('bitmaprenderer');
+      if(ctx) {
+        // transfer the ImageBitmap to it
+        ctx.transferFromImageBitmap(img);
+      }
+      else {
+        // in case someone supports createImageBitmap only
+        // twice in memory...
+        canvas.getContext('2d').drawImage(img,0,0);
+      }
+      // get it back as a Blob
+      var blob = canvas.toBlob(f);
+      canvas.remove()
+      return blob;
+    },
+
     b64toBlob: function(b64Data, contentType, sliceSize) {
         contentType = contentType || '';
         sliceSize = sliceSize || 512;
