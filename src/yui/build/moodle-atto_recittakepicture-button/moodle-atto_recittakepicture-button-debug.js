@@ -90,7 +90,8 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
             
             var dialogue = this.getDialogue({
                 headerContent: M.util.get_string('pluginname', COMPONENTNAME),
-                width: 'auto',
+                width: window.innerWidth * 0.8,
+                height: window.innerWidth * 0.8,
                 focusAfterHide: true,
             });
             // Set a maximum width for the dialog. This will prevent the dialog width to extend beyond the screen width

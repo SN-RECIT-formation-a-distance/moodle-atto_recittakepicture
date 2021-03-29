@@ -24,6 +24,11 @@
     object-fit: contain;
 }
 
+.camera {
+    text-align: center;
+    overflow: hidden;
+}
+
 .camoutput img {
     max-height: 80%;
     max-width: 100%;
