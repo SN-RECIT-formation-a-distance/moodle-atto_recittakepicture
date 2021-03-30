@@ -71,6 +71,8 @@
          * @private
          */
         _content: null,
+
+        accessGranted: true,
     
         initializer: function() {
             if (this.get('host').canShowFilepicker('media')) {
@@ -81,10 +83,21 @@
                     callback: this.openCamera,
                     buttonName: 'takephoto'
                 });
+                
+                navigator.permissions.query({name: "camera"}).then(function(state){ 
+                    if (state == 'prompt') this.accessGranted = false; 
+                });
             }
         },
     
         openCamera: function(){
+            if (!this.accessGranted){
+                Y.use('moodle-core-notification-alert', function() {
+                    new M.core.alert({message: M.util.get_string('grantaccess', COMPONENTNAME)});
+                });
+                navigator.mediaDevices.getUserMedia({video:true});
+                return;
+            }
             
             var dialogue = this.getDialogue({
                 headerContent: M.util.get_string('pluginname', COMPONENTNAME),
@@ -103,7 +116,7 @@
                     elementid: this.get('host').get('elementid'),
                     component: COMPONENTNAME,
                     width: window.innerWidth * 0.8,
-                    height: window.innerHeight,
+                    height: window.innerHeight * 0.8,
                 }));
             dialogue.set('bodyContent', content)
                     .show();
@@ -231,7 +244,7 @@
     startStream: function(constraints){
         // access video stream from webcam
         var video = document.getElementById(COMPONENTNAME+'video');
-        if (!constraints) constraints = {video: { width: { min: 64, ideal: 1920 }, height: { min: 40, ideal: 1080 }}};
+        if (!constraints) constraints = {video: { facingMode: { exact: "environment" }, width: { min: 64, ideal: 1920 }, height: { min: 40, ideal: 1080 }}};
         navigator.mediaDevices.getUserMedia(constraints)
             // on success, stream it in video tag
             .then(function(stream) {
