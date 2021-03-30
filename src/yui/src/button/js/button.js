@@ -139,7 +139,7 @@
             photodata = canvas.toDataURL('image/png');
             photo.setAttribute('src', photodata);
 
-            this.startStream();
+            this.startStream({video: { facingMode: { exact: "environment" }, width: { min: 64, ideal: 1920 }, height: { min: 40, ideal: 1080 }}});
             photo.parentElement.style.display = "none";
 
             video.addEventListener('canplay', function(ev) {
@@ -221,9 +221,10 @@
                 if (videoDevices.length == 0){
                     document.querySelector('.video-options').style.display = 'none';
                 }
-                const options = videoDevices.map(videoDevice => {
+                var options = videoDevices.map(videoDevice => {
                 return `<option value="${videoDevice.deviceId}">${videoDevice.label}</option>`;
                 });
+                options.push("<option value='' selected></option>");
                 cameraOptions.innerHTML = options.join('');
 
                 cameraOptions.onchange = function(){
@@ -244,7 +245,8 @@
     startStream: function(constraints){
         // access video stream from webcam
         var video = document.getElementById(COMPONENTNAME+'video');
-        if (!constraints) constraints = {video: { facingMode: { exact: "environment" }, width: { min: 64, ideal: 1920 }, height: { min: 40, ideal: 1080 }}};
+        var that = this;
+        if (!constraints) constraints = {video: { width: { min: 64, ideal: 1920 }, height: { min: 40, ideal: 1080 }}};
         navigator.mediaDevices.getUserMedia(constraints)
             // on success, stream it in video tag
             .then(function(stream) {
@@ -253,6 +255,7 @@
             })
             .catch(function(err) {
                 console.log("An error occurred: " + err);
+                that.startStream({video: true});
             });
     },
 
