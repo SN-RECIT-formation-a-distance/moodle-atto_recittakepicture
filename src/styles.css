@@ -5,19 +5,18 @@
 }
 
 .livevideo-controls {
-    margin: auto;
-    text-align: center;
-    padding: 10px;
-    bottom: 95px;
-    position: relative;
+    position: fixed;
+    left: 50%;
+    bottom: 90px;
+    display: flex;
 }
 
-.video-controls > *, .livevideo-controls > * {
+.video-controls > * {
     margin-left: 10px;
 }
 
-.video-options {
-    display: inline;
+.livevideo-controls > button {
+    margin-left: 80px;
 }
 
 .camera video, .camera canvas {
@@ -39,6 +38,7 @@
     background: rgba(0,0,0,0.5);
     display: flex;
     align-items: center;
+    max-height: 100%;
 }
 
 .camoutput img {
@@ -49,4 +49,30 @@
 
 .camoutput {
     text-align: center;
+}
+
+.container-circles {
+}
+
+
+.outer-circle {
+    position: absolute;
+    left: -37px;
+    height: 75px;
+    width: 75px;
+    top: -15px;
+    background-color: rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.inner-circle {
+    position: absolute;
+    left: 50%;
+    top: 38px;
+    height: 44px;
+    width: 44px;
+    background: white;
+    border-radius: 50%;
+    margin: -22px 0px 0px -22px;
 }

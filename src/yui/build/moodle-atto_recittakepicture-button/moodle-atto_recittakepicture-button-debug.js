@@ -43,8 +43,8 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
         '<form id="atto_recittakepicture_dialogue" class="recittakepicture">' +
             '<div class="camera" id="{{component}}camera"><div style="margin:auto">' +
                 '<video id="{{component}}video" autoplay playsinline></video>' +
-                '<div class="livevideo-controls"><div class="video-options"><button class="btn btn-secondary" href="#"><i class="fab fa-rev"></i></button></div>' +
-                '<button id="{{component}}startbutton" class="btn btn-secondary">{{get_string "takephoto" component}}</button></div>' +
+                '<div class="livevideo-controls"><button class="btn btn-secondary" href="#"><i class="fab fa-rev"></i></button>' +
+                '<div class="container-circles" id="{{component}}startbutton"><div class="outer-circle"><div class="inner-circle"></div></div></div></div>' +
             '</div></div>' +
             '<canvas id="{{component}}canvas" style="display:none"></canvas>' +
             '<div class="camoutput">' +

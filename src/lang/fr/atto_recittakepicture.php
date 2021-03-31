@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 
-$string['pluginname'] = 'Take Picture RÉCIT';
-$string['saveimage'] = 'Save Image';
-$string['takephoto'] = 'Take Photo';
-$string['grantaccess'] = 'Please grant access to your camera';
+$string['pluginname'] = 'Prendre une photo RÉCIT';
+$string['saveimage'] = 'Enregistrer photo';
+$string['takephoto'] = 'Reprendre une photo';
+$string['grantaccess'] = 'Veuillez donner accès à la camera';
 
-$string['privacy:metadata'] = 'The atto_recittakepicture plugin does not store any personal data.';
+$string['privacy:metadata'] = 'Le atto_recittakepicture plugin ne store pas de données personnelles.';
 
