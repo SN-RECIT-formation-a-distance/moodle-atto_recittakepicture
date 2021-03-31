@@ -78,6 +78,7 @@
         streamOptions: {video: { width: { min: 64, ideal: 1920 }, height: { min: 40, ideal: 1080 }}},
         devices: [],
         cur_devices: 0,
+        shotBlob: '',
     
         initializer: function() {
             if (this.get('host').canShowFilepicker('media')) {
@@ -136,6 +137,7 @@
             var height = window.innerHeight * 0.7;
             var streaming = false;
             var photodata = '';
+            var that = this;
 
             //Generate white preview
             var context = canvas.getContext('2d');
@@ -183,13 +185,23 @@
                     canvas.width = video.videoWidth;
                     canvas.height = video.videoHeight;
                     context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+                    
+                    if (typeof ImageCapture !== 'undefined'){
+                        const mediaStreamTrack = video.srcObject.getVideoTracks()[0];
+                        const imageCapture = new ImageCapture(mediaStreamTrack);
+                        imageCapture.grabFrame().then(function(img){
+                            that.bmpToBlob(img, function(blob){
+                                that.shotBlob = blob;
+                            })
+                        });
+                    }
             
                     photodata = canvas.toDataURL('image/png');
                     photo.setAttribute('src', photodata);
                     photo.removeAttribute('width');
                     photo.removeAttribute('height');
                     submitbutton.disabled = false;
-                    setTimeout(function(){dialogue.centerDialogue() }.bind(this), 500);
+                    setTimeout(function(){dialogue.centerDialogue() }.bind(that), 500);
                 }
             }, false);
             
@@ -200,25 +212,18 @@
                 submitbutton.disabled = true;
             });
 
-            let that = this;
             submitbutton.addEventListener('click', function(ev) {
                 ev.preventDefault();
-                var block = photodata.split(";");
-                // Get the content type of the image
-                var contentType = block[0].split(":")[1];
-                // get the real base64 content of the file
-                var realData = block[1].split(",")[1];
                 
                 // Convert it to a blob to upload
-                if (typeof ImageCapture !== 'undefined'){
-                    const mediaStreamTrack = video.srcObject.getVideoTracks()[0];
-                    const imageCapture = new ImageCapture(mediaStreamTrack);
-                    imageCapture.grabFrame().then(function(img){
-                        that.bmpToBlob(img, function(blob){
-                            that._uploadImage(blob);
-                        })
-                    });
+                if (that.shotBlob){
+                    that._uploadImage(that.shotBlob);
                 }else{
+                    var block = photodata.split(";");
+                    // Get the content type of the image
+                    var contentType = block[0].split(":")[1];
+                    // get the real base64 content of the file
+                    var realData = block[1].split(",")[1];
                     var blob = that.b64toBlob(realData, contentType);
                     that._uploadImage(blob);
                 }
