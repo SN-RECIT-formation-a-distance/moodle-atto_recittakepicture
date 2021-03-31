@@ -39,16 +39,17 @@
 
     TEMPLATE = '' +
         '<form id="atto_recittakepicture_dialogue" class="recittakepicture">' +
-            '<div class="camera">' +
-                '<video id="{{component}}video"></video>' +
-            '</div>' +
+            '<div class="camera" id="{{component}}camera"><div style="margin:auto">' +
+                '<video id="{{component}}video" autoplay playsinline></video>' +
+                '<div class="livevideo-controls"><div class="video-options"><button class="btn btn-secondary" href="#"><i class="fab fa-rev"></i></button></div>' +
+                '<button id="{{component}}startbutton" class="btn btn-secondary">{{get_string "takephoto" component}}</button></div>' +
+            '</div></div>' +
             '<canvas id="{{component}}canvas" style="display:none"></canvas>' +
             '<div class="camoutput">' +
                 '<img id="{{component}}photo" width="{{width}}" height="{{height}}" alt="capture">' +
+                '<div class="video-controls"><button id="{{component}}startbutton2" class="btn btn-secondary">{{get_string "takephoto" component}}</button>' +
+                '<button class="btn btn-secondary" id="{{component}}submit" disabled> {{get_string "saveimage" component}}</button></div>' +
             '</div>' +
-            '<div class="video-controls"><div class="video-options">{{get_string "selectcamera" component}}: <select></select></div>' +
-            '<button id="{{component}}startbutton" class="btn btn-secondary">{{get_string "takephoto" component}}</button>' +
-            '<button class="btn btn-secondary" id="{{component}}submit" disabled> {{get_string "saveimage" component}}</button></div>' +
         '</form>';
         COMPONENTNAME = 'atto_recittakepicture';
          
@@ -71,8 +72,12 @@
          * @private
          */
         _content: null,
+        stream: null,
 
         accessGranted: true,
+        streamOptions: {video: { width: { min: 64, ideal: 1920 }, height: { min: 40, ideal: 1080 }}},
+        devices: [],
+        cur_devices: 0,
     
         initializer: function() {
             if (this.get('host').canShowFilepicker('media')) {
@@ -101,14 +106,14 @@
             
             var dialogue = this.getDialogue({
                 headerContent: M.util.get_string('pluginname', COMPONENTNAME),
-                width: window.innerWidth * 0.8,
-                height: window.innerWidth * 0.8,
                 focusAfterHide: true,
+                width: 'auto',
+                height: 'auto'
             });
             // Set a maximum width for the dialog. This will prevent the dialog width to extend beyond the screen width
             // in cases when the uploaded image has larger width.
-            dialogue.get('boundingBox').setStyle('maxWidth', '90%');
-            dialogue.get('boundingBox').setStyle('maxHeight', '90%');
+            //dialogue.get('boundingBox').setStyle('maxWidth', '90%');
+            //dialogue.get('boundingBox').setStyle('maxHeight', '90%');
             // Set the dialogue content, and then show the dialogue.
     
             var template = Y.Handlebars.compile(TEMPLATE);
@@ -118,13 +123,14 @@
                     width: window.innerWidth * 0.8,
                     height: window.innerHeight * 0.8,
                 }));
-            dialogue.set('bodyContent', content)
-                    .show();
+            dialogue.set('bodyContent', content).show();
 
+            var camera = document.getElementById(COMPONENTNAME+'camera');
             var video = document.getElementById(COMPONENTNAME+'video');
             var canvas = document.getElementById(COMPONENTNAME+'canvas');
             var photo = document.getElementById(COMPONENTNAME+'photo');
             var startbutton = document.getElementById(COMPONENTNAME+'startbutton');
+            var startbutton2 = document.getElementById(COMPONENTNAME+'startbutton2');
             var submitbutton = document.getElementById(COMPONENTNAME+'submit');
             var width = window.innerWidth * 0.7;
             var height = window.innerHeight * 0.7;
@@ -139,7 +145,7 @@
             photodata = canvas.toDataURL('image/png');
             photo.setAttribute('src', photodata);
 
-            this.startStream({video: { facingMode: { exact: "environment" }, width: { min: 64, ideal: 1920 }, height: { min: 40, ideal: 1080 }}});
+            this.startStream();
             photo.parentElement.style.display = "none";
 
             video.addEventListener('canplay', function(ev) {
@@ -164,13 +170,13 @@
 
             startbutton.addEventListener('click', function(ev) {
                 ev.preventDefault();
-                if (video.style.display === "none") {
-                    video.style.display = "block";
+                if (camera.style.display === "none") {
+                    camera.style.display = "block";
                     photo.parentElement.style.display = "none";
                     submitbutton.disabled = true;
                     return;
                 }else{
-                    video.style.display = "none";
+                    camera.style.display = "none";
                     photo.parentElement.style.display = "block";
                 }
                 if (width && height) {
@@ -183,8 +189,16 @@
                     photo.removeAttribute('width');
                     photo.removeAttribute('height');
                     submitbutton.disabled = false;
+                    setTimeout(function(){dialogue.centerDialogue() }.bind(this), 500);
                 }
             }, false);
+            
+            startbutton2.addEventListener('click', function(ev) {
+                ev.preventDefault();
+                camera.style.display = "block";
+                photo.parentElement.style.display = "none";
+                submitbutton.disabled = true;
+            });
 
             let that = this;
             submitbutton.addEventListener('click', function(ev) {
@@ -210,31 +224,21 @@
                 }
             }, false);
             this.loadCameraDevices();
+            this.initChangeDevice();
     },
 
     loadCameraDevices: function(){
-        let that = this;
         if ('mediaDevices' in navigator && navigator.mediaDevices.getUserMedia) {
+            var that = this;
             const cameraOptions = document.querySelector('.video-options>select');
             navigator.mediaDevices.enumerateDevices().then(function(devices){
                 const videoDevices = devices.filter(device => device.kind === 'videoinput');
                 if (videoDevices.length == 0){
                     document.querySelector('.video-options').style.display = 'none';
                 }
-                var options = videoDevices.map(videoDevice => {
-                return `<option value="${videoDevice.deviceId}">${videoDevice.label}</option>`;
-                });
-                options.push("<option value='' selected></option>");
-                cameraOptions.innerHTML = options.join('');
-
-                cameraOptions.onchange = function(){
-                    that.startStream({
-                        video: {
-                            deviceId: {exact: cameraOptions.value}, 
-                            width: { min: 64, ideal: 1920 }, 
-                            height: { min: 40, ideal: 1080 },
-                        },
-                    });
+                that.devices = [];
+                for (var dev of videoDevices){
+                    that.devices.push(dev.deviceId);
                 }
             });
         }else{
@@ -242,21 +246,45 @@
         }
     },
 
-    startStream: function(constraints){
+    initChangeDevice: function(){
+        var that = this;
+        var btn = document.querySelector('.video-options>button');
+        btn.addEventListener('click', function(ev){
+
+            ev.preventDefault();
+            if (that.devices.length == that.cur_devices){
+                that.cur_devices = 0;
+            }
+            var dev = that.devices[that.cur_devices];
+            that.streamOptions.video.deviceId = {exact:dev};
+            that.cur_devices++;
+            that.startStream();
+        })
+    },
+
+    startStream: function(){
         // access video stream from webcam
         var video = document.getElementById(COMPONENTNAME+'video');
         var that = this;
-        if (!constraints) constraints = {video: { width: { min: 64, ideal: 1920 }, height: { min: 40, ideal: 1080 }}};
-        navigator.mediaDevices.getUserMedia(constraints)
+        that.stopStream();
+        navigator.mediaDevices.getUserMedia(that.streamOptions)
             // on success, stream it in video tag
             .then(function(stream) {
                 video.srcObject = stream;
+                that.stream = stream;
                 video.play();
+                that.loadCameraDevices();
             })
             .catch(function(err) {
-                console.log("An error occurred: " + err);
-                that.startStream({video: true});
+                alert("An error occurred: " + err);
+                //that.startStream({video: true});
             });
+    },
+
+    stopStream: function(){
+        if (this.stream){
+            this.stream.getTracks().forEach(function(t){ t.stop()});
+        }
     },
 
     _uploadImage: function(fileToSave) {
@@ -361,6 +389,7 @@
         self.getDialogue({
             focusAfterHide: null
         }).hide();
+        this.stopStream();
     },
     
     bmpToBlob: function(img, f){
