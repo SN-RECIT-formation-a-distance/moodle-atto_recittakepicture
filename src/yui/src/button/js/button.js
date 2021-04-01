@@ -40,6 +40,7 @@
     TEMPLATE = '' +
         '<form id="atto_recittakepicture_dialogue" class="recittakepicture">' +
             '<div class="camera" id="{{component}}camera"><div style="margin:auto">' +
+                '<button id="{{component}}close" class="closebtn"><i class="fas fa-times-circle"></i></button>' +
                 '<video id="{{component}}video" autoplay playsinline></video>' +
                 '<div class="livevideo-controls"><div class="video-options"><button class="btn btn-secondary"><i class="fab fa-rev"></i></button>' +
                 '<div class="container-circles" id="{{component}}startbutton"><div class="outer-circle"><div class="inner-circle"></div></div></div></div></div>' +
@@ -130,6 +131,7 @@
             var video = document.getElementById(COMPONENTNAME+'video');
             var canvas = document.getElementById(COMPONENTNAME+'canvas');
             var photo = document.getElementById(COMPONENTNAME+'photo');
+            var closebutton = document.getElementById(COMPONENTNAME+'close');
             var startbutton = document.getElementById(COMPONENTNAME+'startbutton');
             var startbutton2 = document.getElementById(COMPONENTNAME+'startbutton2');
             var submitbutton = document.getElementById(COMPONENTNAME+'submit');
@@ -211,6 +213,11 @@
                 camera.style.display = "block";
                 photo.parentElement.style.display = "none";
                 submitbutton.disabled = true;
+            });
+            
+            closebutton.addEventListener('click', function(ev) {
+                ev.preventDefault();
+                that.close();
             });
 
             submitbutton.addEventListener('click', function(ev) {
@@ -390,7 +397,11 @@
         };
         xhr.open("POST", M.cfg.wwwroot + '/repository/repository_ajax.php?action=upload', true);
         xhr.send(formData);
-        self.getDialogue({
+        this.close();
+    },
+
+    close: function(){
+        this.getDialogue({
             focusAfterHide: null
         }).hide();
         this.stopStream();

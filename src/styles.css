@@ -35,7 +35,7 @@
     bottom: 0;
     right: 0;
     overflow: auto;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0,0,0,0.7);
     display: flex;
     align-items: center;
     max-height: 100%;
@@ -72,4 +72,14 @@
     background: white;
     border-radius: 50%;
     margin: -22px 0px 0px -22px;
+}
+
+.recittakepicture .closebtn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: transparent;
+    border: 0;
+    color: red;
+    font-size: 30px;
 }
