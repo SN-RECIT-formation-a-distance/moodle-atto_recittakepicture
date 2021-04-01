@@ -16,8 +16,8 @@
 
 
 $string['pluginname'] = 'Take Picture RÉCIT';
-$string['saveimage'] = 'Save Image';
-$string['takephoto'] = 'Take Photo';
+$string['saveimage'] = 'Save';
+$string['takephoto'] = 'Back';
 $string['grantaccess'] = 'Please grant access to your camera';
 
 $string['privacy:metadata'] = 'The atto_recittakepicture plugin does not store any personal data.';
