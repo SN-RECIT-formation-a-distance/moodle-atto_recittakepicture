@@ -15,7 +15,7 @@
     margin-left: 10px;
 }
 
-.livevideo-controls > button {
+.livevideo-controls button {
     margin-left: 80px;
 }
 
@@ -49,9 +49,6 @@
 
 .camoutput {
     text-align: center;
-}
-
-.container-circles {
 }
 
 

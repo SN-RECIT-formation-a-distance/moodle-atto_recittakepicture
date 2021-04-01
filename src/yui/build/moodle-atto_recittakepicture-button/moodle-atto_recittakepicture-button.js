@@ -43,8 +43,8 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
         '<form id="atto_recittakepicture_dialogue" class="recittakepicture">' +
             '<div class="camera" id="{{component}}camera"><div style="margin:auto">' +
                 '<video id="{{component}}video" autoplay playsinline></video>' +
-                '<div class="livevideo-controls"><button class="btn btn-secondary" href="#"><i class="fab fa-rev"></i></button>' +
-                '<div class="container-circles" id="{{component}}startbutton"><div class="outer-circle"><div class="inner-circle"></div></div></div></div>' +
+                '<div class="livevideo-controls"><div class="video-options"><button class="btn btn-secondary"><i class="fab fa-rev"></i></button>' +
+                '<div class="container-circles" id="{{component}}startbutton"><div class="outer-circle"><div class="inner-circle"></div></div></div></div></div>' +
             '</div></div>' +
             '<canvas id="{{component}}canvas" style="display:none"></canvas>' +
             '<div class="camoutput">' +
@@ -151,6 +151,7 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
 
             this.startStream();
             photo.parentElement.style.display = "none";
+            setTimeout(function(){dialogue.centerDialogue() }.bind(that), 500);
 
             video.addEventListener('canplay', function(ev) {
                 if (!streaming) {
@@ -237,7 +238,6 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
     loadCameraDevices: function(){
         if ('mediaDevices' in navigator && navigator.mediaDevices.getUserMedia) {
             var that = this;
-            const cameraOptions = document.querySelector('.video-options>select');
             navigator.mediaDevices.enumerateDevices().then(function(devices){
                 const videoDevices = devices.filter(device => device.kind === 'videoinput');
                 if (videoDevices.length == 0){
@@ -257,7 +257,6 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
         var that = this;
         var btn = document.querySelector('.video-options>button');
         btn.addEventListener('click', function(ev){
-
             ev.preventDefault();
             if (that.devices.length == that.cur_devices){
                 that.cur_devices = 0;
