@@ -465,4 +465,4 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
         }
 });
 
-}, '@VERSION@');
+}, '@VERSION@', {"requires": ["moodle-editor_atto-plugin"]});
