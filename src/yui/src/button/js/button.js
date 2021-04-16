@@ -91,9 +91,12 @@
                     buttonName: 'takephoto'
                 });
                 
-                navigator.permissions.query({name: "camera"}).then(function(state){ 
-                    if (state == 'prompt') this.accessGranted = false; 
-                });
+                if(navigator.permissions){
+                    navigator.permissions.query({name: "camera"}).then(function(state){ 
+                        if (state == 'prompt') this.accessGranted = false; 
+                    });
+                }
+                
             }
         },
     
