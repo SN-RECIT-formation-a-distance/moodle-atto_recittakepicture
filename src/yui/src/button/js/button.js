@@ -47,6 +47,7 @@
             '</div></div>' +
             '<canvas id="{{component}}canvas" style="display:none"></canvas>' +
             '<div class="camoutput">' +
+                '<div class="preview"></div>' +
                 '<img id="{{component}}photo" width="{{width}}" height="{{height}}" alt="capture">' +
                 '<div class="video-controls"><button id="{{component}}startbutton2" class="btn btn-secondary">{{get_string "takephoto" component}}</button>' +
                 '<button class="btn btn-secondary" id="{{component}}submit" disabled> {{get_string "saveimage" component}}</button></div>' +
@@ -80,6 +81,7 @@
         devices: [],
         cur_devices: 0,
         shotBlob: '',
+        cropper: null,
     
         initializer: function() {
             if (this.get('host').canShowFilepicker('media')) {
@@ -93,6 +95,12 @@
                 
                 navigator.permissions.query({name: "camera"}).then(function(state){ 
                     if (state == 'prompt') this.accessGranted = false; 
+                });
+                
+                var src = M.cfg.wwwroot +'/lib/editor/atto/plugins/recittakepicture/js/cropper.js';
+                var that = this;
+                requirejs([src], function(app) {
+                    that.cropper = app;
                 });
             }
         },
@@ -200,9 +208,18 @@
                     }
             
                     photodata = canvas.toDataURL('image/png');
+                    if (that.shotBlob){
+                        photodata = URL.createObjectURL(that.shotBlob);
+                    }
                     photo.setAttribute('src', photodata);
                     photo.removeAttribute('width');
                     photo.removeAttribute('height');
+                    photo.style.display = "none";
+                    that.cropperEl = new that.cropper(photo, {
+                    aspectRatio: 0,
+                    viewMode: 3,
+                    preview: '.preview'
+                    });
                     submitbutton.disabled = false;
                     setTimeout(function(){dialogue.centerDialogue() }.bind(that), 500);
                 }
@@ -224,17 +241,14 @@
                 ev.preventDefault();
                 
                 // Convert it to a blob to upload
-                if (that.shotBlob){
-                    that._uploadImage(that.shotBlob);
-                }else{
-                    var block = photodata.split(";");
-                    // Get the content type of the image
-                    var contentType = block[0].split(":")[1];
-                    // get the real base64 content of the file
-                    var realData = block[1].split(",")[1];
-                    var blob = that.b64toBlob(realData, contentType);
+               
+                var canvas = that.cropperEl.getCroppedCanvas({
+                    
+                });
+                canvas.toBlob(function(blob) {
                     that._uploadImage(blob);
-                }
+                    that.cropperEl.destroy();
+                });
             }, false);
             this.loadCameraDevices();
             this.initChangeDevice();

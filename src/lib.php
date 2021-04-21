@@ -18,7 +18,7 @@
  * Initialise the js strings required for this module.
  */
 function atto_recittakepicture_strings_for_js() {
-    global $PAGE;
+    global $PAGE; 
 
     $PAGE->requires->strings_for_js(array('pluginname',
                                           'saveimage',
