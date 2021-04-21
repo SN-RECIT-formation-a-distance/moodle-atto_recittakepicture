@@ -95,9 +95,11 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
                     buttonName: 'takephoto'
                 });
                 
-                navigator.permissions.query({name: "camera"}).then(function(state){ 
-                    if (state == 'prompt') this.accessGranted = false; 
-                });
+                if (navigator.permissions){
+                    navigator.permissions.query({name: "camera"}).then(function(state){ 
+                        if (state == 'prompt') this.accessGranted = false; 
+                    });
+                }
                 
                 var src = M.cfg.wwwroot +'/lib/editor/atto/plugins/recittakepicture/js/cropper.js';
                 var that = this;
