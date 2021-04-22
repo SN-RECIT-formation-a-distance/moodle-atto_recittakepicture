@@ -51,7 +51,8 @@
 .camoutput {
     text-align: center;
     min-width: 50vw;
-    min-height: 50vh;
+    min-height: 40vh;
+    max-height: 70vh;
 }
 
 
