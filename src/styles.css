@@ -45,10 +45,13 @@
     max-height: 70vh;
     max-width: 70vw;
     object-fit: contain;
+    display: none;
 }
 
 .camoutput {
     text-align: center;
+    min-width: 50vw;
+    min-height: 50vh;
 }
 
 
@@ -81,7 +84,17 @@
     background: transparent;
     border: 0;
     color: red;
+    z-index: 111;
     font-size: 30px;
+}
+
+/**********************************************************
+/ Smartphone layout
+/*********************************************************/
+@media screen and (max-width: 767px){
+  .preview {
+    max-height: 70%;
+  }
 }
 
 
@@ -390,3 +403,4 @@
     cursor: not-allowed;
   }
   
+

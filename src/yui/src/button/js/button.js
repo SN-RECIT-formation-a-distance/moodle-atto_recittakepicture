@@ -214,12 +214,11 @@
                         photodata = URL.createObjectURL(that.shotBlob);
                     }
                     photo.setAttribute('src', photodata);
-                    photo.removeAttribute('width');
-                    photo.removeAttribute('height');
-                    photo.style.display = "none";
+                    //photo.removeAttribute('width');
+                    //photo.removeAttribute('height');
                     that.cropperEl = new that.cropper(photo, {
                     aspectRatio: 0,
-                    viewMode: 3,
+                    viewMode: 0,
                     preview: '.preview'
                     });
                     submitbutton.disabled = false;
@@ -232,11 +231,15 @@
                 camera.style.display = "block";
                 photo.parentElement.style.display = "none";
                 submitbutton.disabled = true;
+                if (that.cropperEl) that.cropperEl.destroy();
+                that.shotBlob = null;
             });
             
             closebutton.addEventListener('click', function(ev) {
                 ev.preventDefault();
                 that.close();
+                if (that.cropperEl) that.cropperEl.destroy();
+                that.shotBlob = null;
             });
 
             submitbutton.addEventListener('click', function(ev) {
