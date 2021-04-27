@@ -119,7 +119,7 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
             }
             
             var dialogue = this.getDialogue({
-                headerContent: M.util.get_string('pluginname', COMPONENTNAME),
+                headerContent: M.util.get_string('takephoto', COMPONENTNAME),
                 focusAfterHide: true,
                 width: 'auto',
                 height: 'auto'
