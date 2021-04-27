@@ -49,7 +49,7 @@
             '<div class="camoutput">' +
                 '<div class="preview"></div>' +
                 '<img id="{{component}}photo" width="{{width}}" height="{{height}}" alt="capture">' +
-                '<div class="video-controls"><button id="{{component}}startbutton2" class="btn btn-secondary">{{get_string "takephoto" component}}</button>' +
+                '<div class="video-controls"><button id="{{component}}startbutton2" class="btn btn-secondary">{{get_string "back" component}}</button>' +
                 '<button class="btn btn-secondary" id="{{component}}submit" disabled> {{get_string "saveimage" component}}</button></div>' +
             '</div>' +
         '</form>';
