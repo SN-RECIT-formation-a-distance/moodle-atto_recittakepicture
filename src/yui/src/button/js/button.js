@@ -251,10 +251,13 @@
                     maxHeight: 2000
                 });
                 //that.convertCanvasto256(canvas);
-                canvas.toBlob(function(blob) {
+                var blob = canvas.toDataURL('image/jpeg', 1.0);
+                blob = that._convertImage(blob);
+                
+                //canvas.toBlob(function(blob) {
                     that._uploadImage(blob);
-                    that.cropperEl.destroy();
-                });
+                    //that.cropperEl.destroy();
+                //});
             }, false);
             this.loadCameraDevices();
             this.initChangeDevice();
@@ -351,6 +354,26 @@
         if (this.stream){
             this.stream.getTracks().forEach(function(t){ t.stop()});
         }
+    },
+
+    _convertImage: function(dataURI) {
+        // convert base64/URLEncoded data component to raw binary data held in a string
+        var byteString;
+        if (dataURI.split(',')[0].indexOf('base64') >= 0) {
+            byteString = atob(dataURI.split(',')[1]);
+        } else {
+            byteString = decodeURI(dataURI.split(',')[1]);
+        }
+        // separate out the mime component
+        var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+
+        // write the bytes of the string to a typed array
+        var ia = new Uint8Array(byteString.length);
+        for (var i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+        }
+
+        return new Blob([ia], {type: mimeString});
     },
 
     _uploadImage: function(fileToSave) {
