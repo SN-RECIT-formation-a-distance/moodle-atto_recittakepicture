@@ -51,7 +51,7 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
             '<div class="camoutput">' +
                 '<div class="preview"></div>' +
                 '<img id="{{component}}photo" width="{{width}}" height="{{height}}" alt="capture">' +
-                '<div class="video-controls"><button id="{{component}}startbutton2" class="btn btn-secondary">{{get_string "back" component}}</button>' +
+                '<div class="video-controls"><button id="{{component}}returnbutton" class="btn btn-secondary">{{get_string "back" component}}</button>' +
                 '<button class="btn btn-secondary" id="{{component}}submit" disabled> {{get_string "saveimage" component}}</button></div>' +
             '</div>' +
         '</form>';
@@ -84,6 +84,7 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
         cur_devices: 0,
         shotBlob: '',
         cropper: null,
+        dialogue:null,
     
         initializer: function() {
             if (this.get('host').canShowFilepicker('media')) {
@@ -118,7 +119,7 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
                 return;
             }
             
-            var dialogue = this.getDialogue({
+            this.dialogue = this.getDialogue({
                 headerContent: M.util.get_string('takephoto', COMPONENTNAME),
                 focusAfterHide: true,
                 width: 'auto',
@@ -139,7 +140,7 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
                     width: window.innerWidth * 0.8,
                     height: window.innerHeight * 0.8,
                 }));
-            dialogue.set('bodyContent', content).show();
+            this.dialogue.set('bodyContent', content).show();
 
             var camera = document.getElementById(COMPONENTNAME+'camera');
             var video = document.getElementById(COMPONENTNAME+'video');
@@ -147,7 +148,7 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
             var photo = document.getElementById(COMPONENTNAME+'photo');
             var closebutton = document.getElementById(COMPONENTNAME+'close');
             var startbutton = document.getElementById(COMPONENTNAME+'startbutton');
-            var startbutton2 = document.getElementById(COMPONENTNAME+'startbutton2');
+            var returnbutton = document.getElementById(COMPONENTNAME+'returnbutton');
             var submitbutton = document.getElementById(COMPONENTNAME+'submit');
             var width = window.innerWidth * 0.7;
             var height = window.innerHeight * 0.7;
@@ -165,7 +166,7 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
 
             this.startStream();
             photo.parentElement.style.display = "none";
-            setTimeout(function(){dialogue.centerDialogue() }.bind(that), 500);
+            setTimeout(function(){that.dialogue.centerDialogue() }.bind(that), 500);
 
             video.addEventListener('canplay', function(ev) {
                 if (!streaming) {
@@ -218,25 +219,23 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
                         photodata = URL.createObjectURL(that.shotBlob);
                     }
                     photo.setAttribute('src', photodata);
+
+                    that.initCropper();
+                    setTimeout(function(){that.dialogue.centerDialogue() }.bind(that), 500);
+                    submitbutton.disabled = false;
                     //photo.removeAttribute('width');
                     //photo.removeAttribute('height');
-                    that.cropperEl = new that.cropper(photo, {
-                    aspectRatio: 0,
-                    viewMode: 0,
-                    preview: '.preview'
-                    });
-                    submitbutton.disabled = false;
-                    setTimeout(function(){dialogue.centerDialogue() }.bind(that), 500);
                 }
             }, false);
             
-            startbutton2.addEventListener('click', function(ev) {
+            returnbutton.addEventListener('click', function(ev) {
                 ev.preventDefault();
                 camera.style.display = "block";
                 photo.parentElement.style.display = "none";
                 submitbutton.disabled = true;
                 if (that.cropperEl) that.cropperEl.destroy();
                 that.shotBlob = null;
+                that.cropperEl = null;
             });
             
             closebutton.addEventListener('click', function(ev) {
@@ -244,6 +243,7 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
                 that.close();
                 if (that.cropperEl) that.cropperEl.destroy();
                 that.shotBlob = null;
+                that.cropperEl = null;
             });
 
             submitbutton.addEventListener('click', function(ev) {
@@ -255,17 +255,27 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
                     maxHeight: 2000
                 });
                 submitbutton.disabled = true;
-                submitbutton.innerHTML = '<span class="sr-only">Loading...</span>';
+                submitbutton.innerHTML = '<i class=\'fa fa-spinner fa-spin\'></i>';
+                returnbutton.disabled = true;
                 var blob = canvas.toDataURL('image/jpeg', 1.0);
                 blob = that._convertImage(blob);
                 
-                //canvas.toBlob(function(blob) {
-                    that._uploadImage(blob);
-                    //that.cropperEl.destroy();
-                //});
+                that._uploadImage(blob);
             }, false);
             this.loadCameraDevices();
             this.initChangeDevice();
+    },
+
+    initCropper(){
+        if (this.cropperEl) this.cropperEl.destroy();
+        
+        var photo = document.getElementById(COMPONENTNAME+'photo');
+
+        this.cropperEl = new this.cropper(photo, {
+        aspectRatio: 0,
+        viewMode: 0,
+        preview: '.preview'
+        });
     },
 
     loadCameraDevices: function(){
@@ -298,7 +308,12 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
             that.streamOptions.video.deviceId = {exact:dev};
             that.cur_devices++;
             that.startStream();
-        })
+        });
+
+        window.addEventListener("orientationchange", function(event) {
+            if (!that.cropperEl) return;
+            that.initCropper();
+        });
     },
 
     startStream: function(){

@@ -82,6 +82,7 @@
         cur_devices: 0,
         shotBlob: '',
         cropper: null,
+        dialogue:null,
     
         initializer: function() {
             if (this.get('host').canShowFilepicker('media')) {
@@ -116,7 +117,7 @@
                 return;
             }
             
-            var dialogue = this.getDialogue({
+            this.dialogue = this.getDialogue({
                 headerContent: M.util.get_string('takephoto', COMPONENTNAME),
                 focusAfterHide: true,
                 width: 'auto',
@@ -137,7 +138,7 @@
                     width: window.innerWidth * 0.8,
                     height: window.innerHeight * 0.8,
                 }));
-            dialogue.set('bodyContent', content).show();
+            this.dialogue.set('bodyContent', content).show();
 
             var camera = document.getElementById(COMPONENTNAME+'camera');
             var video = document.getElementById(COMPONENTNAME+'video');
@@ -163,7 +164,7 @@
 
             this.startStream();
             photo.parentElement.style.display = "none";
-            setTimeout(function(){dialogue.centerDialogue() }.bind(that), 500);
+            setTimeout(function(){that.dialogue.centerDialogue() }.bind(that), 500);
 
             video.addEventListener('canplay', function(ev) {
                 if (!streaming) {
@@ -216,15 +217,12 @@
                         photodata = URL.createObjectURL(that.shotBlob);
                     }
                     photo.setAttribute('src', photodata);
+
+                    that.initCropper();
+                    setTimeout(function(){that.dialogue.centerDialogue() }.bind(that), 500);
+                    submitbutton.disabled = false;
                     //photo.removeAttribute('width');
                     //photo.removeAttribute('height');
-                    that.cropperEl = new that.cropper(photo, {
-                    aspectRatio: 0,
-                    viewMode: 0,
-                    preview: '.preview'
-                    });
-                    submitbutton.disabled = false;
-                    setTimeout(function(){dialogue.centerDialogue() }.bind(that), 500);
                 }
             }, false);
             
@@ -235,6 +233,7 @@
                 submitbutton.disabled = true;
                 if (that.cropperEl) that.cropperEl.destroy();
                 that.shotBlob = null;
+                that.cropperEl = null;
             });
             
             closebutton.addEventListener('click', function(ev) {
@@ -242,6 +241,7 @@
                 that.close();
                 if (that.cropperEl) that.cropperEl.destroy();
                 that.shotBlob = null;
+                that.cropperEl = null;
             });
 
             submitbutton.addEventListener('click', function(ev) {
@@ -258,13 +258,22 @@
                 var blob = canvas.toDataURL('image/jpeg', 1.0);
                 blob = that._convertImage(blob);
                 
-                //canvas.toBlob(function(blob) {
-                    that._uploadImage(blob);
-                    //that.cropperEl.destroy();
-                //});
+                that._uploadImage(blob);
             }, false);
             this.loadCameraDevices();
             this.initChangeDevice();
+    },
+
+    initCropper(){
+        if (this.cropperEl) this.cropperEl.destroy();
+        
+        var photo = document.getElementById(COMPONENTNAME+'photo');
+
+        this.cropperEl = new this.cropper(photo, {
+        aspectRatio: 0,
+        viewMode: 0,
+        preview: '.preview'
+        });
     },
 
     loadCameraDevices: function(){
@@ -297,7 +306,12 @@
             that.streamOptions.video.deviceId = {exact:dev};
             that.cur_devices++;
             that.startStream();
-        })
+        });
+
+        window.addEventListener("orientationchange", function(event) {
+            if (!that.cropperEl) return;
+            that.initCropper();
+        });
     },
 
     startStream: function(){
