@@ -249,14 +249,15 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
             submitbutton.addEventListener('click', function(ev) {
                 ev.preventDefault();
                 
-                // Convert it to a blob to upload
-               
-                var canvas = that.cropperEl.getCroppedCanvas({
-                    maxHeight: 2000
-                });
+                // Disable buttons as the process can be slow on old devices
                 submitbutton.disabled = true;
                 submitbutton.innerHTML = '<i class=\'fa fa-spinner fa-spin\'></i>';
                 returnbutton.disabled = true;
+
+                // Convert it to a blob to upload
+                var canvas = that.cropperEl.getCroppedCanvas({
+                    maxHeight: 2000
+                });
                 var blob = canvas.toDataURL('image/jpeg', 1.0);
                 blob = that._convertImage(blob);
                 
