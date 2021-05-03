@@ -196,16 +196,9 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
                 }
                 photo.setAttribute('src', photodata);
 
-                // If iOS is old, don't show cropper, too slow
-                if (that.getIOSVersion() && that.getIOSVersion()[0] < 13){
-                    var blob = canvas.toDataURL('image/jpeg', 1.0);
-                    blob = that._convertImage(blob);
-                    
-                    that._uploadImage(blob);
-                }else{
-                    that.initCropper();
-                    setTimeout(function(){that.dialogue.centerDialogue() }.bind(that), 500);
-                }
+                that.initCropper();
+                setTimeout(function(){that.dialogue.centerDialogue() }.bind(that), 500);
+                
                 submitbutton.disabled = false;
             }, false);
             
@@ -232,14 +225,16 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
                 submitbutton.innerHTML = '<i class=\'fa fa-spinner fa-spin\'></i>';
                 returnbutton.disabled = true;
 
-                // Convert it to a blob to upload
-                var canvas = that.cropperEl.getCroppedCanvas({
-                    maxHeight: 2000
-                });
-                var blob = canvas.toDataURL('image/jpeg', 1.0);
-                blob = that._convertImage(blob);
-                
-                that._uploadImage(blob);
+                setTimeout(function(){
+                    // Convert it to a blob to upload
+                    var canvas = that.cropperEl.getCroppedCanvas({
+                        maxHeight: 2000
+                    });
+                    var blob = canvas.toDataURL('image/jpeg', 1.0);
+                    blob = that._convertImage(blob);
+                    
+                    that._uploadImage(blob);
+                }, 500);
             }, false);
             this.loadCameraDevices();
             this.initChangeDevice();
@@ -473,14 +468,6 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
       canvas.remove()
       return blob;
     },
-
-    
-	getIOSVersion: function() {
-		if (/iP(hone|od|ad)/.test(navigator.platform)) {
-			var v = (navigator.appVersion).match(/OS (\d+)_(\d+)_?(\d+)?/);
-			return [parseInt(v[1], 10), parseInt(v[2], 10), parseInt(v[3] || 0, 10)];
-		}
-	},
 
     }, {
         ATTRS: {
