@@ -55,6 +55,17 @@
     max-height: 70vh;
 }
 
+@supports (-webkit-touch-callout: none) {
+  /* CSS specific to iOS devices */ 
+  .camoutput img {
+    max-height: 66vh;
+  }
+
+  .camoutput {
+    max-height: 66vh;
+  }
+}
+
 
 .outer-circle {
     position: absolute;

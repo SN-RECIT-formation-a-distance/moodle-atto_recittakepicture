@@ -122,12 +122,14 @@
                 width: 'auto',
                 height: 'auto'
             });
-            // Set a maximum width for the dialog. This will prevent the dialog width to extend beyond the screen width
-            // in cases when the uploaded image has larger width.
-            //dialogue.get('boundingBox').setStyle('maxWidth', '90%');
-            //dialogue.get('boundingBox').setStyle('maxHeight', '90%');
+            
+            // Apple bug: hide Safari navbar so users can see buttons
+            if (navigator.userAgent.match(/iPhone/i) || navigator.userAgent.match(/iPad/i)) {
+                /* iOS hides Safari address bar */
+                window.scrollTo(0, 1);
+            }
+
             // Set the dialogue content, and then show the dialogue.
-    
             var template = Y.Handlebars.compile(TEMPLATE);
             var content = Y.Node.create(template({
                     elementid: this.get('host').get('elementid'),
