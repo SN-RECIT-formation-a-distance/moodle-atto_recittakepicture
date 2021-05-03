@@ -148,9 +148,6 @@
             var startbutton = document.getElementById(COMPONENTNAME+'startbutton');
             var returnbutton = document.getElementById(COMPONENTNAME+'returnbutton');
             var submitbutton = document.getElementById(COMPONENTNAME+'submit');
-            var width = window.innerWidth * 0.7;
-            var height = window.innerHeight * 0.7;
-            var streaming = false;
             var photodata = '';
             var that = this;
 
@@ -166,26 +163,6 @@
             photo.parentElement.style.display = "none";
             setTimeout(function(){that.dialogue.centerDialogue() }.bind(that), 500);
 
-            video.addEventListener('canplay', function(ev) {
-                if (!streaming) {
-                    height = video.videoHeight / (video.videoWidth / width);
-
-                    if (isNaN(height)) {
-                        height = width / (4 / 3);
-                    }
-                    
-                    if (video.videoHeight > window.innerHeight*0.8){
-                        height = window.innerHeight * 0.8;
-                        width = video.videoWidth / (video.videoHeight / height);
-                    }
-
-                    //video.setAttribute('width', width);
-                    ///canvas.setAttribute('width', width);
-                    //canvas.setAttribute('height', height);
-                    streaming = true;
-                }
-            }, false);
-
             startbutton.addEventListener('click', function(ev) {
                 ev.preventDefault();
                 if (camera.style.display === "none") {
@@ -197,33 +174,29 @@
                     camera.style.display = "none";
                     photo.parentElement.style.display = "block";
                 }
-                if (width && height) {
-                    canvas.width = video.videoWidth;
-                    canvas.height = video.videoHeight;
-                    context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
-                    
-                    if (typeof ImageCapture !== 'undefined'){
-                        const mediaStreamTrack = video.srcObject.getVideoTracks()[0];
-                        const imageCapture = new ImageCapture(mediaStreamTrack);
-                        imageCapture.grabFrame().then(function(img){
-                            that.bmpToBlob(img, function(blob){
-                                that.shotBlob = blob;
-                            })
-                        });
-                    }
-            
-                    photodata = canvas.toDataURL('image/png');
-                    if (that.shotBlob){
-                        photodata = URL.createObjectURL(that.shotBlob);
-                    }
-                    photo.setAttribute('src', photodata);
-
-                    that.initCropper();
-                    setTimeout(function(){that.dialogue.centerDialogue() }.bind(that), 500);
-                    submitbutton.disabled = false;
-                    //photo.removeAttribute('width');
-                    //photo.removeAttribute('height');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+                
+                if (typeof ImageCapture !== 'undefined'){
+                    const mediaStreamTrack = video.srcObject.getVideoTracks()[0];
+                    const imageCapture = new ImageCapture(mediaStreamTrack);
+                    imageCapture.grabFrame().then(function(img){
+                        that.bmpToBlob(img, function(blob){
+                            that.shotBlob = blob;
+                        })
+                    });
                 }
+        
+                photodata = canvas.toDataURL('image/png');
+                if (that.shotBlob){
+                    photodata = URL.createObjectURL(that.shotBlob);
+                }
+                photo.setAttribute('src', photodata);
+
+                that.initCropper();
+                setTimeout(function(){that.dialogue.centerDialogue() }.bind(that), 500);
+                submitbutton.disabled = false;
             }, false);
             
             returnbutton.addEventListener('click', function(ev) {
@@ -239,9 +212,6 @@
             closebutton.addEventListener('click', function(ev) {
                 ev.preventDefault();
                 that.close();
-                if (that.cropperEl) that.cropperEl.destroy();
-                that.shotBlob = null;
-                that.cropperEl = null;
             });
 
             submitbutton.addEventListener('click', function(ev) {
@@ -291,6 +261,7 @@
                 }
             });
         }else{
+            // Hide camera switch button if they have only one camera
             document.querySelector('.video-options').style.display = 'none';
         }
     },
@@ -330,7 +301,6 @@
             })
             .catch(function(err) {
                 alert("An error occurred: " + err);
-                //that.startStream({video: true});
             });
     },
 
@@ -467,10 +437,12 @@
             focusAfterHide: null
         }).hide();
         this.stopStream();
+        if (this.cropperEl) this.cropperEl.destroy();
+        this.shotBlob = null;
+        this.cropperEl = null;
     },
     
     bmpToBlob: function(img, f){
-        
       const canvas = document.createElement('canvas');
       // resize it to the size of our ImageBitmap
       canvas.width = img.width;
