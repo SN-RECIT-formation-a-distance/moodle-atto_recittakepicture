@@ -196,8 +196,16 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
                 }
                 photo.setAttribute('src', photodata);
 
-                that.initCropper();
-                setTimeout(function(){that.dialogue.centerDialogue() }.bind(that), 500);
+                // If iOS is old, don't show cropper, too slow
+                if (that.getIOSVersion() && that.getIOSVersion()[0] < 13){
+                    var blob = canvas.toDataURL('image/jpeg', 1.0);
+                    blob = that._convertImage(blob);
+                    
+                    that._uploadImage(blob);
+                }else{
+                    that.initCropper();
+                    setTimeout(function(){that.dialogue.centerDialogue() }.bind(that), 500);
+                }
                 submitbutton.disabled = false;
             }, false);
             
@@ -465,6 +473,14 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
       canvas.remove()
       return blob;
     },
+
+    
+	getIOSVersion: function() {
+		if (/iP(hone|od|ad)/.test(navigator.platform)) {
+			var v = (navigator.appVersion).match(/OS (\d+)_(\d+)_?(\d+)?/);
+			return [parseInt(v[1], 10), parseInt(v[2], 10), parseInt(v[3] || 0, 10)];
+		}
+	},
 
     }, {
         ATTRS: {
