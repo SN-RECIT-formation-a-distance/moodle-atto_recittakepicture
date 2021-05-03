@@ -254,7 +254,8 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
                 var canvas = that.cropperEl.getCroppedCanvas({
                     maxHeight: 2000
                 });
-                //that.convertCanvasto256(canvas);
+                submitbutton.disabled = true;
+                submitbutton.innerHTML = '<span class="sr-only">Loading...</span>';
                 var blob = canvas.toDataURL('image/jpeg', 1.0);
                 blob = that._convertImage(blob);
                 
@@ -265,41 +266,6 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
             }, false);
             this.loadCameraDevices();
             this.initChangeDevice();
-    },
-
-    convertCanvasto256: function(myCanvas){
-        var myCanvasContext = myCanvas.getContext("2d");
-        
-        var imageData = myCanvasContext.getImageData(0,0, myCanvas.width, myCanvas.height);
-
-
-        // go through it all...
-        for (var j=0; j<imageData.width; j++)
-        {
-            for (var i=0; i<imageData.height; i++)
-            {
-                // index: red, green, blue, alpha, red, green, blue, alpha..etc.
-                var index=(i*4)*imageData.width+(j*4);
-                var r=imageData.data[index];
-                var g=imageData.data[index+1];
-                var b=imageData.data[index+2];
-                var alpha=imageData.data[index+3];
-                var color = (r*6/256)*36 + (g*6/256)*6 + (b*6/256)               
-
-                // set the red to the same
-                imageData.data[index]=color;
-
-                // set the rest to black
-                imageData.data[index+1]=color;
-                imageData.data[index+2]=color;
-                imageData.data[index+3]=alpha;
-                delete c;
-            }
-        }
-
-        // put the image data back into the canvas
-        myCanvasContext.putImageData(imageData,0,0,0,0, imageData.width,   imageData.height);
-
     },
 
     loadCameraDevices: function(){
@@ -509,30 +475,6 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
       // get it back as a Blob
       var blob = canvas.toBlob(f);
       canvas.remove()
-      return blob;
-    },
-
-    b64toBlob: function(b64Data, contentType, sliceSize) {
-        contentType = contentType || '';
-        sliceSize = sliceSize || 512;
-
-        var byteCharacters = atob(b64Data);
-        var byteArrays = [];
-
-        for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-            var slice = byteCharacters.slice(offset, offset + sliceSize);
-
-            var byteNumbers = new Array(slice.length);
-            for (var i = 0; i < slice.length; i++) {
-                byteNumbers[i] = slice.charCodeAt(i);
-            }
-
-            var byteArray = new Uint8Array(byteNumbers);
-
-            byteArrays.push(byteArray);
-        }
-
-      var blob = new Blob(byteArrays, {type: contentType});
       return blob;
     },
 
