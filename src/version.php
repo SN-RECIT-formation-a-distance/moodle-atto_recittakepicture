@@ -16,7 +16,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2021030200;
+$plugin->version   = 2021050400;
 $plugin->requires  = 2018050800;
 $plugin->component = 'atto_recittakepicture';
 $plugin->maturity = MATURITY_ALPHA;
