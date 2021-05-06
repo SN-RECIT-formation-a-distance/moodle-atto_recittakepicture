@@ -294,7 +294,9 @@
         var video = document.getElementById(COMPONENTNAME+'video');
         var that = this;
         that.stopStream();
-        navigator.mediaDevices.getUserMedia(that.streamOptions)
+        
+        if(navigator && navigator.mediaDevices){
+            navigator.mediaDevices.getUserMedia(that.streamOptions)
             // on success, stream it in video tag
             .then(function(stream) {
                 video.srcObject = stream;
@@ -305,6 +307,11 @@
             .catch(function(err) {
                 alert("An error occurred: " + err);
             });
+        }
+        else{
+            alert("An error occurred. See console for more information.");
+            console.log("navigator or navigator.mediaDevices are undefined");
+        }
     },
 
     stopStream: function(){
@@ -466,12 +473,4 @@
       canvas.remove()
       return blob;
     },
-
-    }, {
-        ATTRS: {
-        }
-    }, {
-        ATTRS: {
-            
-        }
 });
