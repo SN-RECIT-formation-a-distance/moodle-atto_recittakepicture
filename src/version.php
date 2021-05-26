@@ -20,5 +20,5 @@ $plugin->version   = 2021050400;
 $plugin->requires  = 2018050800;
 $plugin->component = 'atto_recittakepicture';
 $plugin->maturity = MATURITY_ALPHA;
-$plugin->release = 'R13-V1.13.1';
+$plugin->release = 'R13-V1.13.2';
 
