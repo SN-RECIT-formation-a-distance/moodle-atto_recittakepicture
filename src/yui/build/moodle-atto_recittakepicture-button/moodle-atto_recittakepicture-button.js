@@ -395,7 +395,6 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
                 file,
                 newhtml,
                 newimage;
-            self.close();
 
             if (xhr.readyState === 4) {
                 if (xhr.status === 200) {
@@ -439,6 +438,7 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
                     }
                 }
             }
+            self.close();
         };
         xhr.open("POST", M.cfg.wwwroot + '/repository/repository_ajax.php?action=upload', true);
         xhr.send(formData);

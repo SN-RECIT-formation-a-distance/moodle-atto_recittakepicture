@@ -393,7 +393,6 @@
                 file,
                 newhtml,
                 newimage;
-            self.close();
 
             if (xhr.readyState === 4) {
                 if (xhr.status === 200) {
@@ -437,6 +436,7 @@
                     }
                 }
             }
+            self.close();
         };
         xhr.open("POST", M.cfg.wwwroot + '/repository/repository_ajax.php?action=upload', true);
         xhr.send(formData);
