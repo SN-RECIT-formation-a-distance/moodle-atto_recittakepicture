@@ -426,6 +426,9 @@
                             self.editor.appendChild(newimage);
                         }
                         self.markUpdated();
+                        newimage._node.children[0].onload = function(){
+                            self.close();
+                        }
                     }
                 } else {
                     Y.use('moodle-core-notification-alert', function() {
@@ -436,7 +439,6 @@
                     }
                 }
             }
-            self.close();
         };
         xhr.open("POST", M.cfg.wwwroot + '/repository/repository_ajax.php?action=upload', true);
         xhr.send(formData);
