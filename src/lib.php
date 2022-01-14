@@ -15,6 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * This atto plugin allows to take pictures directly from your webcam and integrate them to your text.
+ *
+ * @package    atto_recittakepicture
+ * @copyright  2019 RECIT
+ * @license    {@link http://www.gnu.org/licenses/gpl-3.0.html} GNU GPL v3 or later
+ */
+
+/**
  * Initialise the js strings required for this module.
  */
 function atto_recittakepicture_strings_for_js() {

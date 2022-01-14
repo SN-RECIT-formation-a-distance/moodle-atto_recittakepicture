@@ -14,10 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * This atto plugin allows to take pictures directly from your webcam and integrate them to your text.
+ *
+ * @package    atto_recittakepicture
+ * @copyright  2019 RECIT
+ * @license    {@link http://www.gnu.org/licenses/gpl-3.0.html} GNU GPL v3 or later
+ */
+
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->version   = 2021092400;
-$plugin->requires  = 2018050800;
+$plugin->requires  = 2020060700;
 $plugin->component = 'atto_recittakepicture';
 $plugin->maturity = MATURITY_ALPHA;
 $plugin->release = 'R14-V1.0';

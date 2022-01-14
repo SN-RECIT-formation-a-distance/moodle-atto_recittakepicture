@@ -18,7 +18,7 @@
  * Privacy Subsystem implementation for atto_recittakepicture
  *
  * @package    atto_recittakepicture
- * @copyright  2018 Nicolas Dunand
+ * @copyright  2019 RECIT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

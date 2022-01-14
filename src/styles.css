@@ -1,32 +1,32 @@
-.video-controls {
+.recittakepicture .video-controls {
     margin: auto;
     text-align: center;
     padding: 10px;
 }
 
-.livevideo-controls {
+.recittakepicture .livevideo-controls {
     position: fixed;
     left: 50%;
     bottom: 90px;
     display: flex;
 }
 
-.video-controls > * {
+.recittakepicture .video-controls > * {
     margin-left: 10px;
 }
 
-.livevideo-controls button {
+.recittakepicture .livevideo-controls button {
     margin-left: 80px;
 }
 
-.camera video, .camera canvas {
+.recittakepicture .camera video, .recittakepicture .camera canvas {
     max-width: 100%;
     width: auto;
     height: auto;
     margin: auto;
 }
 
-.camera {
+.recittakepicture .camera {
     text-align: center;
     overflow: hidden;
     position: fixed;
@@ -67,7 +67,7 @@
 }
 
 
-.outer-circle {
+.recittakepicture .outer-circle {
     position: absolute;
     left: -37px;
     height: 75px;
@@ -78,7 +78,7 @@
     cursor: pointer;
 }
 
-.inner-circle {
+.recittakepicture .inner-circle {
     position: absolute;
     left: 50%;
     top: 38px;
@@ -104,7 +104,7 @@
 / Smartphone layout
 /*********************************************************/
 @media screen and (max-width: 767px){
-  .preview {
+  .recittakepicture .preview {
     max-height: 67%;
   }
 }

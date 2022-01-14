@@ -13,6 +13,13 @@
     // You should have received a copy of the GNU General Public License
     // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
     
+    /**
+     * This atto plugin allows to take pictures directly from your webcam and integrate them to your text.
+     *
+     * @package    atto_recittakepicture
+     * @copyright  2019 RECIT
+     * @license    {@link http://www.gnu.org/licenses/gpl-3.0.html} GNU GPL v3 or later
+     */
     
     /**
      * @module moodle-atto_recittakepicture-button
@@ -42,7 +49,7 @@
             '<div class="camera" id="{{component}}camera"><div style="margin:auto">' +
                 '<button id="{{component}}close" class="closebtn"><i class="fas fa-times-circle"></i></button>' +
                 '<video id="{{component}}video" autoplay playsinline></video>' +
-                '<div class="livevideo-controls"><div class="video-options"><button class="btn btn-secondary"><i class="fab fa-rev"></i></button>' +
+                '<div class="livevideo-controls"><div class="video-options"><button class="btn btn-secondary"><i class="fa fa-repeat"></i></button>' +
                 '<div class="container-circles" id="{{component}}startbutton"><div class="outer-circle"><div class="inner-circle"></div></div></div></div></div>' +
             '</div></div>' +
             '<canvas id="{{component}}canvas" style="display:none"></canvas>' +
