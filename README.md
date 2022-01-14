@@ -1,8 +1,8 @@
 # mp-atto-recittakepicture
 
-This atto plugin allows to take pictures directly from your webcam, crop them, and integrate them to your text.
+This atto plugin allows you to take pictures directly from your webcam, crop them, and integrate them into your text.
 
- # Plus d'information / More informations
+ # Plus d'information / More information
  
 <ul>
 	<li>https://recitfad.ca/moodledocs/ (only in Canada)</li>
