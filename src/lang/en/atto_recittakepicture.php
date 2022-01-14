@@ -17,7 +17,7 @@
 
 $string['pluginname'] = 'Take Picture RÉCIT';
 $string['saveimage'] = 'Save';
-$string['takephoto'] = 'Take Picture';
+$string['takephoto'] = 'Take a picture';
 $string['back'] = 'Back';
 $string['grantaccess'] = 'Please grant access to your camera';
 $string['uploading'] = 'Uploading';
