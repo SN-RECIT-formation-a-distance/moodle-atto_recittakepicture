@@ -314,11 +314,11 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
                 that.loadCameraDevices();
             })
             .catch(function(err) {
-                alert("An error occurred: " + err);
+                alert(M.util.get_string('error', COMPONENTNAME)+": " + err);
             });
         }
         else{
-            alert("An error occurred. See console for more information.");
+            alert(M.util.get_string('error', COMPONENTNAME));
             console.log("navigator or navigator.mediaDevices are undefined");
         }
     },

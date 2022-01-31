@@ -24,3 +24,4 @@ $string['uploading'] = 'Uploading';
 
 $string['privacy:metadata'] = 'The atto_recittakepicture plugin does not store any personal data.';
 
+$string['error'] = 'An error has occured';

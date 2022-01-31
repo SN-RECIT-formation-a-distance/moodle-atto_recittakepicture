@@ -32,6 +32,7 @@ function atto_recittakepicture_strings_for_js() {
                                           'saveimage',
                                           'back',
                                           'takephoto',
+                                          'error',
                                         ),
                                     'atto_recittakepicture');
 }

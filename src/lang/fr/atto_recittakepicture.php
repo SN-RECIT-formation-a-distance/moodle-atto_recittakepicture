@@ -20,7 +20,8 @@ $string['saveimage'] = 'Enregistrer';
 $string['takephoto'] = 'Prendre une photo';
 $string['back'] = 'Revenir';
 $string['grantaccess'] = 'Veuillez donner accès à la camera';
-$string['uploading'] = 'Téléchargement en cours';
+$string['uploading'] = 'Téléversement en cours';
+$string['error'] = 'Une erreur est survenue';
 
 $string['privacy:metadata'] = 'Le atto_recittakepicture plugin ne store pas de données personnelles.';
 
