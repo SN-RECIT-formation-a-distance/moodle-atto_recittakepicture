@@ -36,7 +36,9 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
      */
     
 
-     IMAGETEMPLATE = '<a href="{{url}}" target="_blank">' +
+         
+    Y.namespace('M.atto_recittakepicture').Button = Y.Base.create('button', Y.M.editor_atto.EditorPlugin, [], {
+     IMAGETEMPLATE: '<a href="{{url}}" target="_blank">' +
      '<img src="{{url}}" alt="{{alt}}" ' +
          '{{#if width}}width="{{width}}" {{/if}}' +
          '{{#if height}}height="{{height}}" {{/if}}' +
@@ -44,9 +46,9 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
          '{{#if customstyle}}style="{{customstyle}}" {{/if}}' +
          '{{#if classlist}}class="{{classlist}}" {{/if}}' +
          '{{#if id}}id="{{id}}" {{/if}}' +
-         '/></a>';
+         '/></a>',
 
-    TEMPLATE = '' +
+    TEMPLATE: '' +
         '<form id="atto_recittakepicture_dialogue" class="recittakepicture">' +
             '<div class="camera" id="{{component}}camera"><div style="margin:auto">' +
                 '<button id="{{component}}close" class="closebtn"><i class="fas fa-times-circle"></i></button>' +
@@ -61,10 +63,8 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
                 '<div class="video-controls"><button id="{{component}}returnbutton" class="btn btn-secondary">{{get_string "back" component}}</button>' +
                 '<button class="btn btn-secondary" id="{{component}}submit" disabled> {{get_string "saveimage" component}}</button></div>' +
             '</div>' +
-        '</form>';
-        COMPONENTNAME = 'atto_recittakepicture';
-         
-    Y.namespace('M.atto_recittakepicture').Button = Y.Base.create('button', Y.M.editor_atto.EditorPlugin, [], {
+        '</form>',
+        COMPONENTNAME: 'atto_recittakepicture',
         /**
          * A reference to the current selection at the time that the dialogue
          * was opened.
@@ -98,7 +98,7 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
                 this.addButton({
                     title: 'takephoto',
                     icon: 'e/camera',
-                    iconComponent: COMPONENTNAME,
+                    iconComponent: this.COMPONENTNAME,
                     callback: this.openCamera,
                     buttonName: 'takephoto'
                 });
@@ -120,14 +120,14 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
         openCamera: function(){
             if (!this.accessGranted){
                 Y.use('moodle-core-notification-alert', function() {
-                    new M.core.alert({message: M.util.get_string('grantaccess', COMPONENTNAME)});
+                    new M.core.alert({message: M.util.get_string('grantaccess', this.COMPONENTNAME)});
                 });
                 navigator.mediaDevices.getUserMedia({video:true});
                 return;
             }
             
             this.dialogue = this.getDialogue({
-                headerContent: M.util.get_string('takephoto', COMPONENTNAME),
+                headerContent: M.util.get_string('takephoto', this.COMPONENTNAME),
                 focusAfterHide: true,
                 width: 'auto',
                 height: 'auto'
@@ -140,23 +140,23 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
             }
 
             // Set the dialogue content, and then show the dialogue.
-            var template = Y.Handlebars.compile(TEMPLATE);
+            var template = Y.Handlebars.compile(this.TEMPLATE);
             var content = Y.Node.create(template({
                     elementid: this.get('host').get('elementid'),
-                    component: COMPONENTNAME,
+                    component: this.COMPONENTNAME,
                     width: window.innerWidth * 0.8,
                     height: window.innerHeight * 0.8,
                 }));
             this.dialogue.set('bodyContent', content).show();
 
-            var camera = document.getElementById(COMPONENTNAME+'camera');
-            var video = document.getElementById(COMPONENTNAME+'video');
-            var canvas = document.getElementById(COMPONENTNAME+'canvas');
-            var photo = document.getElementById(COMPONENTNAME+'photo');
-            var closebutton = document.getElementById(COMPONENTNAME+'close');
-            var startbutton = document.getElementById(COMPONENTNAME+'startbutton');
-            var returnbutton = document.getElementById(COMPONENTNAME+'returnbutton');
-            var submitbutton = document.getElementById(COMPONENTNAME+'submit');
+            var camera = document.getElementById(this.COMPONENTNAME+'camera');
+            var video = document.getElementById(this.COMPONENTNAME+'video');
+            var canvas = document.getElementById(this.COMPONENTNAME+'canvas');
+            var photo = document.getElementById(this.COMPONENTNAME+'photo');
+            var closebutton = document.getElementById(this.COMPONENTNAME+'close');
+            var startbutton = document.getElementById(this.COMPONENTNAME+'startbutton');
+            var returnbutton = document.getElementById(this.COMPONENTNAME+'returnbutton');
+            var submitbutton = document.getElementById(this.COMPONENTNAME+'submit');
             var photodata = '';
             var that = this;
 
@@ -250,7 +250,7 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
     initCropper(){
         if (this.cropperEl) this.cropperEl.destroy();
         
-        var photo = document.getElementById(COMPONENTNAME+'photo');
+        var photo = document.getElementById(this.COMPONENTNAME+'photo');
 
         this.cropperEl = new this.cropper(photo, {
         aspectRatio: 0,
@@ -300,7 +300,7 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
 
     startStream: function(){
         // access video stream from webcam
-        var video = document.getElementById(COMPONENTNAME+'video');
+        var video = document.getElementById(this.COMPONENTNAME+'video');
         var that = this;
         that.stopStream();
         
@@ -314,11 +314,11 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
                 that.loadCameraDevices();
             })
             .catch(function(err) {
-                alert(M.util.get_string('error', COMPONENTNAME)+": " + err);
+                alert(M.util.get_string('error', this.COMPONENTNAME)+": " + err);
             });
         }
         else{
-            alert(M.util.get_string('error', COMPONENTNAME));
+            alert(M.util.get_string('error', this.COMPONENTNAME));
             console.log("navigator or navigator.mediaDevices are undefined");
         }
     },
@@ -353,7 +353,7 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
 
         var self = this,
             host = this.get('host'),
-            template = Y.Handlebars.compile(IMAGETEMPLATE);
+            template = Y.Handlebars.compile(this.IMAGETEMPLATE);
 
         host.saveSelection();
 
@@ -389,7 +389,7 @@ YUI.add('moodle-atto_recittakepicture-button', function (Y, NAME) {
         host.restoreSelection();
         imagehtml = template({
             url: M.util.image_url("i/loading_small", 'moodle'),
-            alt: M.util.get_string('uploading', COMPONENTNAME),
+            alt: M.util.get_string('uploading', this.COMPONENTNAME),
             id: uploadid
         });
         host.insertContentAtFocusPoint(imagehtml);
