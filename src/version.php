@@ -28,5 +28,5 @@ $plugin->version   = 2022020900;
 $plugin->requires  = 2020061500.00; // Moodle 3.9.0
 $plugin->component = 'atto_recittakepicture';
 $plugin->maturity = MATURITY_BETA;
-$plugin->release = 'R15-V1.0';
+$plugin->release = 'v1.15.0';
 
