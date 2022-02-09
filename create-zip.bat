@@ -1,5 +1,5 @@
 echo off
-set zipName=recittakepicture
+set zipName=atto_recittakepicture
 set pluginName=recittakepicture
 
 rem remove the current 
