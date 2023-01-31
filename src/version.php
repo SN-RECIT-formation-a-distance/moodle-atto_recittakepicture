@@ -24,10 +24,10 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2022100100;
+$plugin->version   = 2023011900;
 $plugin->requires  = 2020061500.00; // Moodle 3.9.0
 $plugin->component = 'atto_recittakepicture';
-$plugin->maturity = MATURITY_BETA;
-$plugin->supported = [39, 400];      //  Moodle 3.9.x, 3.10.x and 3.11.x are supported.
-$plugin->release = 'v1.16.0-beta';
+$plugin->maturity = MATURITY_STABLE;
+$plugin->supported = [39, 410];      //  Moodle 3.9.x, 3.10.x and 3.11.x are supported.
+$plugin->release = 'v1.16.1-stable';
 
