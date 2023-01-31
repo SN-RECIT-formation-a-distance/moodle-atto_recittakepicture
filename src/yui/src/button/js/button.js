@@ -59,7 +59,7 @@
                 '<div class="preview"></div>' +
                 '<img id="{{component}}photo" width="{{width}}" height="{{height}}" alt="capture">' +
                 '<div class="video-controls"><button id="{{component}}returnbutton" class="btn btn-secondary">{{get_string "back" component}}</button>' +
-                '<button class="btn btn-secondary" id="{{component}}submit" disabled> {{get_string "saveimage" component}}</button></div>' +
+                '<button class="btn btn-primary" id="{{component}}submit" disabled> {{get_string "saveimage" component}}</button></div>' +
             '</div>' +
         '</form>',
         COMPONENTNAME: 'atto_recittakepicture',
@@ -127,8 +127,8 @@
             this.dialogue = this.getDialogue({
                 headerContent: M.util.get_string('takephoto', this.COMPONENTNAME),
                 focusAfterHide: true,
-                width: 'auto',
-                height: 'auto'
+                width: window.innerWidth * 0.8,
+                height: window.innerHeight * 0.8,
             });
             
             // Apple bug: hide Safari navbar so users can see buttons
