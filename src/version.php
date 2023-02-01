@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2023011900;
+$plugin->version   = 2023012300;
 $plugin->requires  = 2020061500.00; // Moodle 3.9.0
 $plugin->component = 'atto_recittakepicture';
 $plugin->maturity = MATURITY_STABLE;
